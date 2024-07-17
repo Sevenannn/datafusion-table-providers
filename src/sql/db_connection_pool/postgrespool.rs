@@ -18,6 +18,7 @@ use crate::sql::db_connection_pool::{
     dbconnection::{postgresconn::PostgresConnection, AsyncDbConnection, DbConnection},
     JoinPushDown,
 };
+use core::time::Duration;
 
 #[derive(Debug, Snafu)]
 pub enum Error {
@@ -166,6 +167,7 @@ impl PostgresConnectionPool {
 
         let pool = bb8::Pool::builder()
             .error_sink(Box::new(error_sink))
+            .connection_timeout(Duration::from_secs(200))
             .build(manager)
             .await
             .context(ConnectionPoolSnafu)?;
